@@ -20,9 +20,11 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
+import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileWriter
+import java.nio.charset.Charset
 
 
 class MainActivity : AppCompatActivity() {
@@ -137,10 +139,16 @@ class MainActivity : AppCompatActivity() {
         if (resultCode == Activity.RESULT_OK) {
             val imageBitmap = data?.extras?.get("data") as Bitmap
             image_view.setImageBitmap(imageBitmap)
-            writeFileOnInternalStorage(
+            val path = writeFileOnInternalStorage(
                 this.applicationContext,
                 "filename.txt",
                 toBase64(imageBitmap)
+            )
+
+            writeFileOnInternalStorage(
+                this.applicationContext,
+                makeJson(path).toString(), // this also is bad, prob wont work either, not sure how to stream JSON
+                "filename.json"
             )
         }
     }
@@ -153,7 +161,11 @@ class MainActivity : AppCompatActivity() {
         return Base64.encodeToString(byteArray, Base64.DEFAULT)
     }
 
-    fun writeFileOnInternalStorage(mcoContext: Context, sFileName: String?, sBody: String?) {
+    fun writeFileOnInternalStorage(
+        mcoContext: Context,
+        sFileName: String?,
+        sBody: String?
+    ): String {
         val file = File(mcoContext.filesDir, "mydir")
         if (file.exists()) {
         } else {
@@ -168,7 +180,21 @@ class MainActivity : AppCompatActivity() {
         } catch (e: Exception) {
             e.printStackTrace()
         }
+        return file.absoluteFile.toString()
+    }
+
+    fun makeJson(base64path: String): JSONObject {
+        var jsonObject = JSONObject()
+        var metadata = JSONObject()
+        metadata.put("name", "test_image.jpg")
+        metadata.put("tags", "")
+        jsonObject.put("metadata", metadata)
+
+
+        // this is the problem needs to be streamed somehow
+        var payload = File(base64path).readText(Charset.defaultCharset())
+
+        jsonObject.put("payload", payload)
+        return jsonObject
     }
 }
-
-

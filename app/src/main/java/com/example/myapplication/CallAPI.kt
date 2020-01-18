@@ -1,14 +1,15 @@
 package com.example.myapplication
 
 
+import android.R.attr.path
 import android.os.AsyncTask
-
-import java.io.BufferedOutputStream
-import java.io.BufferedWriter
-import java.io.OutputStream
-import java.io.OutputStreamWriter
+import org.json.JSONObject
+import java.io.*
 import java.net.HttpURLConnection
 import java.net.URL
+import java.nio.charset.Charset
+import java.util.*
+
 
 class CallAPI : AsyncTask<String, String, Void>() {
 
@@ -39,4 +40,6 @@ class CallAPI : AsyncTask<String, String, Void>() {
 
         return null
     }
+
+
 }//set context variables if required
