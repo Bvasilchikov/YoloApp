@@ -9,6 +9,7 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.util.Base64
 import android.util.Log
@@ -21,9 +22,7 @@ import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import org.json.JSONObject
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.FileWriter
+import java.io.*
 import java.nio.charset.Charset
 
 
@@ -139,17 +138,10 @@ class MainActivity : AppCompatActivity() {
         if (resultCode == Activity.RESULT_OK) {
             val imageBitmap = data?.extras?.get("data") as Bitmap
             image_view.setImageBitmap(imageBitmap)
-            val path = writeFileOnInternalStorage(
-                this.applicationContext,
-                "filename.txt",
-                toBase64(imageBitmap)
-            )
 
-            writeFileOnInternalStorage(
-                this.applicationContext,
-                makeJson(path).toString(), // this also is bad, prob wont work either, not sure how to stream JSON
-                "filename.json"
-            )
+            makeJson(toBase64(imageBitmap))
+
+
         }
     }
 
@@ -180,21 +172,37 @@ class MainActivity : AppCompatActivity() {
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        return file.absoluteFile.toString()
+        return file.absolutePath.toString()
     }
 
-    fun makeJson(base64path: String): JSONObject {
+    fun makeJson(base64: String) {
         var jsonObject = JSONObject()
         var metadata = JSONObject()
         metadata.put("name", "test_image.jpg")
         metadata.put("tags", "")
         jsonObject.put("metadata", metadata)
 
-
         // this is the problem needs to be streamed somehow
-        var payload = File(base64path).readText(Charset.defaultCharset())
+        //var payload = File(base64path).readText(Charset.defaultCharset())
 
-        jsonObject.put("payload", payload)
-        return jsonObject
+        jsonObject.put("payload", base64)
+        saveJson(jsonObject.toString())
+
+
+    }
+
+    fun saveJson(json: String) {
+        val output: Writer
+
+        val storageDir = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
+        if (storageDir != null) {
+            if(!storageDir.exists()){
+                storageDir.mkdir()
+            }
+        }
+        val file = File.createTempFile("base64",".json",storageDir)
+        output = BufferedWriter(FileWriter(file))
+        output.write(json)
+        output.close()
     }
 }
