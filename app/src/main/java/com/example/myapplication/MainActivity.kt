@@ -3,29 +3,27 @@ package com.example.myapplication
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.ContentValues
-import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
-import androidx.appcompat.app.AppCompatActivity
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-
-import kotlinx.android.synthetic.main.activity_main.*
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.provider.MediaStore
-import androidx.core.content.ContextCompat
-
-import android.graphics.Camera
-import android.media.Image
 import android.net.Uri
+import android.os.Bundle
+import android.provider.MediaStore
+import android.util.Base64
 import android.util.Log
-import android.widget.ImageView
-import android.widget.Toast
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
+import java.io.ByteArrayOutputStream
+import java.io.FileNotFoundException
+import java.io.PrintWriter
+import java.lang.Exception
 
 
 class MainActivity : AppCompatActivity() {
@@ -47,6 +45,7 @@ class MainActivity : AppCompatActivity() {
         setupPermissions()
 
     }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
@@ -103,7 +102,11 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
         when (requestCode) {
             REQUEST_IMAGE_CAPTURE -> {
 
@@ -133,17 +136,29 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
-
+        print("got here")
         if (resultCode == Activity.RESULT_OK) {
             val imageBitmap = data?.extras?.get("data") as Bitmap
             image_view.setImageBitmap(imageBitmap)
             //image_view.setImageURI(image_uri)
+            try {
+                val out = PrintWriter("filename.txt")
+                out.print(toBase64(bitmap = imageBitmap))
+                out.close()
+                print("I did it!")
+            } catch (e: Exception){
+                print("ERROR:" + e.toString())
+            }
 
         }
     }
 
-
-
+    fun toBase64(bitmap: Bitmap): String {
+        var byteArrayOutputStream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
+        var byteArray = byteArrayOutputStream.toByteArray()
+        return Base64.encodeToString(byteArray, Base64.DEFAULT)
+    }
 
 
 }
