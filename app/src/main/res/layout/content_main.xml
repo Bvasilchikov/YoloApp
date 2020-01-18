@@ -8,43 +8,95 @@
     tools:context=".MainActivity"
     tools:showIn="@layout/activity_main">
 
-    <!--    android:src="@drawable/ic_image_black_24dp"     -->
-    <!--Button to open camera-->
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Welcome to YoloAPP v1.0.0!"
+        android:layout_marginStart="160dp"
+        android:layout_marginLeft="160dp"
+        android:layout_marginBottom="80dp"
+        android:text="@string/previous_images"
         android:textSize="24sp"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
         android:id="@+id/image_view"
-        android:layout_width="411dp"
-        android:layout_height="385dp"
-        android:layout_marginBottom="75dp"
         android:contentDescription="@string/displays_picture_last_taken"
         android:scaleType="centerCrop"
-        app:layout_constraintBottom_toTopOf="@+id/textView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        android:layout_marginTop="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_height="300dp"
+        android:layout_width="match_parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        tools:ignore="MissingConstraints" />
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/capture_btn"
-        android:layout_width="300dp"
-        android:layout_height="40dp"
-        android:onClick="openCamera"
-        android:text="@string/capture_image"
-        app:backgroundTint="#3F51B5"
-        app:layout_constraintBottom_toTopOf="@+id/textView"
+    <ImageView
+        android:id="@+id/preview_image1_view"
+        android:contentDescription="@string/displays_picture_last_taken"
+        android:scaleType="centerCrop"
+        android:layout_marginTop="410dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="40dp"
+        android:layout_height="80dp"
+        android:layout_width="80dp"
         app:layout_constraintStart_toStartOf="parent"
-        tools:ignore="MissingConstraints" />
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/preview_image2_view"
+        android:contentDescription="@string/displays_picture_last_taken"
+        android:scaleType="centerCrop"
+        android:layout_marginTop="410dp"
+        android:layout_marginLeft="100dp"
+        android:layout_marginRight="40dp"
+        android:layout_height="80dp"
+        android:layout_width="80dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/preview_image3_view"
+        android:contentDescription="@string/displays_picture_last_taken"
+        android:scaleType="centerCrop"
+        android:layout_marginTop="410dp"
+        android:layout_marginLeft="190dp"
+        android:layout_marginRight="40dp"
+        android:layout_height="80dp"
+        android:layout_width="80dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/preview_image4_view"
+        android:contentDescription="@string/displays_picture_last_taken"
+        android:scaleType="centerCrop"
+        android:layout_marginTop="410dp"
+        android:layout_marginLeft="280dp"
+        android:layout_marginRight="40dp"
+        android:layout_height="80dp"
+        android:layout_width="80dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+
+
+<!--    <Button-->
+<!--        android:id="@+id/capture_btn"-->
+<!--        android:layout_width="300dp"-->
+<!--        android:layout_height="40dp"-->
+<!--        android:onClick="openCamera"-->
+<!--        android:text="@string/capture_image"-->
+<!--        app:backgroundTint="#3F51B5"-->
+<!--        app:layout_constraintBottom_toTopOf="@+id/textView"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        android:layout_marginBottom="50dp"-->
+<!--        tools:ignore="MissingConstraints" />-->
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

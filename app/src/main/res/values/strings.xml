@@ -3,4 +3,6 @@
     <string name="action_settings">Settings</string>
     <string name="capture_image">Capture Image</string>
     <string name="displays_picture_last_taken">Displays picture last taken</string>
+    <string name="welcome_to_yoloapp_v1_0_0">Welcome to YoloAPP v1.0.0!</string>
+    <string name="previous_images" />
 </resources>

@@ -41,9 +41,7 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
-        }
+            openCamera(view)}
         setupPermissions()
 
     }
@@ -141,6 +139,9 @@ class MainActivity : AppCompatActivity() {
 
         }
     }
+//    Makes the snack bar thing at the bottom
+//    Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//    .setAction("Action", null).show()
 
 
 
