@@ -26,6 +26,7 @@
     <uses-feature android:name="android.hardware.camera.flash"
         android:required="false" />
     <uses-feature android:name="android.premission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-feature android:name="android.premission.READ_EXTERNAL_STORAGE"/>
 
 
 </manifest>
