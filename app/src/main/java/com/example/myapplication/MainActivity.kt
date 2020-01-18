@@ -3,6 +3,7 @@ package com.example.myapplication
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -17,13 +18,11 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import java.io.ByteArrayOutputStream
-import java.io.FileNotFoundException
-import java.io.PrintWriter
-import java.lang.Exception
+import java.io.File
+import java.io.FileWriter
 
 
 class MainActivity : AppCompatActivity() {
@@ -39,7 +38,8 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         fab.setOnClickListener { view ->
-            openCamera(view)}
+            openCamera(view)
+        }
         setupPermissions()
 
     }
@@ -134,20 +134,14 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
-        print("got here")
         if (resultCode == Activity.RESULT_OK) {
             val imageBitmap = data?.extras?.get("data") as Bitmap
             image_view.setImageBitmap(imageBitmap)
-            //image_view.setImageURI(image_uri)
-            try {
-                val out = PrintWriter("filename.txt")
-                out.print(toBase64(bitmap = imageBitmap))
-                out.close()
-                print("I did it!")
-            } catch (e: Exception){
-                print("ERROR:" + e.toString())
-            }
-
+            writeFileOnInternalStorage(
+                this.applicationContext,
+                "filename.txt",
+                toBase64(imageBitmap)
+            )
         }
     }
 
@@ -159,7 +153,22 @@ class MainActivity : AppCompatActivity() {
         return Base64.encodeToString(byteArray, Base64.DEFAULT)
     }
 
-
+    fun writeFileOnInternalStorage(mcoContext: Context, sFileName: String?, sBody: String?) {
+        val file = File(mcoContext.filesDir, "mydir")
+        if (file.exists()) {
+        } else {
+            file.mkdir()
+        }
+        try {
+            val gpxfile = File(file, sFileName)
+            val writer = FileWriter(gpxfile)
+            writer.append(sBody)
+            writer.flush()
+            writer.close()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
 }
 
 
