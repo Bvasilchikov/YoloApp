@@ -3,7 +3,6 @@ package com.example.myapplication
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -18,15 +17,13 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
+import java.io.ByteArrayOutputStream
+import java.io.FileNotFoundException
+import java.io.PrintWriter
 import java.lang.Exception
-import org.json.JSONObject
-import java.io.*
-import android.system.Os.mkdir
-import java.nio.file.Files.exists
-
-
 
 
 class MainActivity : AppCompatActivity() {
@@ -44,7 +41,6 @@ class MainActivity : AppCompatActivity() {
         fab.setOnClickListener { view ->
             openCamera(view)}
         setupPermissions()
-        Log.d("yeet",savedInstanceState.toString())
 
     }
 
@@ -127,7 +123,6 @@ class MainActivity : AppCompatActivity() {
     fun openCamera(view: View) {
 
         dispatchTakePictureIntent()
-
     }
 
     // Function that handles opening camera
@@ -149,7 +144,6 @@ class MainActivity : AppCompatActivity() {
                 out.print(toBase64(bitmap = imageBitmap))
                 out.close()
                 print("I did it!")
-
             } catch (e: Exception){
                 print("ERROR:" + e.toString())
             }
@@ -164,32 +158,8 @@ class MainActivity : AppCompatActivity() {
         var byteArrayOutputStream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
         var byteArray = byteArrayOutputStream.toByteArray()
-        var payload = Base64.encodeToString(byteArray, Base64.DEFAULT)
-        return payload
+        return Base64.encodeToString(byteArray, Base64.DEFAULT)
     }
-
-
-
-    fun writeFileOnInternalStorage(mcoContext: Context, sFileName: String, sBody: String) {
-        val file = File(mcoContext.getFilesDir(), "mydir")
-        if (!file.exists()) {
-            file.mkdir()
-        }
-
-        try {
-            val gpxfile = File(file, sFileName)
-            val writer = FileWriter(gpxfile)
-            writer.append(sBody)
-            writer.flush()
-            writer.close()
-
-        } catch (e: Exception) {
-            e.printStackTrace()
-
-        }
-
-    }
-
 
 
 }
