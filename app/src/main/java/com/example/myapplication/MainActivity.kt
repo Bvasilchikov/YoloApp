@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Base64
+import android.util.Base64.encodeToString
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -150,7 +151,9 @@ class MainActivity : AppCompatActivity() {
         var byteArrayOutputStream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
         var byteArray = byteArrayOutputStream.toByteArray()
-        return Base64.encodeToString(byteArray, Base64.DEFAULT)
+        var base64 = Base64.encodeToString(byteArray, Base64.DEFAULT)
+        return base64
+
     }
 
     fun writeFileOnInternalStorage(
@@ -176,24 +179,20 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun makeJson(base64: String) {
+        //var base64 = encodeToString(byteArray, Base64.DEFAULT)
         var jsonObject = JSONObject()
         var metadata = JSONObject()
         metadata.put("name", "test_image.jpg")
         metadata.put("tags", "")
         jsonObject.put("metadata", metadata)
 
-        // this is the problem needs to be streamed somehow
-        //var payload = File(base64path).readText(Charset.defaultCharset())
-
         jsonObject.put("payload", base64)
-        saveJson(jsonObject.toString())
-
+        saveJson(jsonObject)
 
     }
 
-    fun saveJson(json: String) {
+    fun saveJson(jsonObject: JSONObject) {
         val output: Writer
-
         val storageDir = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
         if (storageDir != null) {
             if(!storageDir.exists()){
@@ -201,8 +200,10 @@ class MainActivity : AppCompatActivity() {
             }
         }
         val file = File.createTempFile("base64",".json",storageDir)
+        //trying to get rid of temp file method
+        //val yeet = File("base64.json")
         output = BufferedWriter(FileWriter(file))
-        output.write(json)
+        output.write(jsonObject.toString())
         output.close()
     }
 }
