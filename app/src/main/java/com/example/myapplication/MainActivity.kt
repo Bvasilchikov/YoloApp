@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -17,14 +18,18 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import org.json.JSONObject
 import java.io.*
 import java.nio.charset.Charset
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -102,6 +107,50 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
+    lateinit var currentPhotoPath: String
+
+    @Throws(IOException::class)
+    private fun createImageFile(): File {
+        // Create an image file name
+        val storageDir: File? = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        return File.createTempFile(
+            "JPEG_tempPhoto_", /* prefix */
+            ".jpg", /* suffix */
+            storageDir /* directory */
+        ).apply {
+            // Save a file: path for use with ACTION_VIEW intents
+            currentPhotoPath = absolutePath
+        }
+    }
+
+    val REQUEST_TAKE_PHOTO = 1
+
+    private fun dispatchTakePictureIntent() {
+        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
+            // Ensure that there's a camera activity to handle the intent
+            takePictureIntent.resolveActivity(packageManager)?.also {
+                // Create the File where the photo should go
+                val photoFile: File? = try {
+                    createImageFile()
+                } catch (ex: IOException) {
+                    // Error occurred while creating the File
+                    print("It's all B R O K E")
+                    null
+                }
+                // Continue only if the File was successfully created
+                photoFile?.also {
+                    val photoURI: Uri = FileProvider.getUriForFile(
+                        this,
+                        "com.example.myapplication.fileprovider",
+                        it
+                    )
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                    startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO)
+                }
+            }
+        }
+    }
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
@@ -123,26 +172,27 @@ class MainActivity : AppCompatActivity() {
 
     //Function that is called when take picture button is pressed
     fun openCamera(view: View) {
-
         dispatchTakePictureIntent()
     }
 
     // Function that handles opening camera
-    private fun dispatchTakePictureIntent() {
-        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, image_uri)
-        startActivityForResult(cameraIntent, IMAGE_CAPTURE_CODE)
-    }
+//    private fun dispatchTakePictureIntent() {
+//        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+//        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, image_uri)
+//        startActivityForResult(cameraIntent, IMAGE_CAPTURE_CODE)
+//    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
         if (resultCode == Activity.RESULT_OK) {
-            val imageBitmap = data?.extras?.get("data") as Bitmap
-            image_view.setImageBitmap(imageBitmap)
 
-            makeJson(toBase64(imageBitmap))
+            val imgFile = File(currentPhotoPath)
 
-
+            if (imgFile.exists()) {
+                val myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath())
+                image_view.setImageBitmap(myBitmap)
+                makeJson(toBase64(myBitmap))
+            }
         }
     }
 
@@ -195,11 +245,11 @@ class MainActivity : AppCompatActivity() {
         val output: Writer
         val storageDir = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
         if (storageDir != null) {
-            if(!storageDir.exists()){
+            if (!storageDir.exists()) {
                 storageDir.mkdir()
             }
         }
-        val file = File.createTempFile("base64",".json",storageDir)
+        val file = File.createTempFile("base64", ".json", storageDir)
         //trying to get rid of temp file method
         //val yeet = File("base64.json")
         output = BufferedWriter(FileWriter(file))
